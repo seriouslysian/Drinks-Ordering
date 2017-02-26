@@ -1,0 +1,75 @@
+﻿@using DrinksOrdering.ViewModels
+@using DrinksOrdering.Models
+
+@model DrinksViewModel
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<h1>Drinks Ordering</h1>
+
+<div>
+    <div class="col-lg-12">
+        <div class="col-lg-12"><label>Add New Drink:</label></div>
+        @using (Html.BeginForm("Add_Drink", "Home"))
+        {
+            <div class="col-lg-12">
+                <label>@Html.LabelFor(x => x.NewDrink.Name):</label>
+                @Html.EditorFor(x => x.NewDrink.Name)
+                @Html.ValidationMessageFor(x => x.NewDrink.Name)
+            </div>
+            <div class="col-lg-12">
+                <label>@Html.LabelFor(x => x.NewDrink.Quantity):</label>
+                @Html.EditorFor(x => x.NewDrink.Quantity)
+                @Html.ValidationMessageFor(x => x.NewDrink.Quantity)
+            </div>
+            <input type="submit" value="Add" />
+        }
+    </div>
+    <br />
+    <div class="col-lg-12">
+        <div class="col-lg-12"><label>On Order:</label></div>
+        @foreach (Drink drink in Model.Drinks)
+        {
+            <div class="col-lg-7">
+                <p>@drink.Name</p>
+            </div><div class="col-lg-3">
+                <div class="col-lg-4">
+                    <input class="qtydecrease" type="button" value="-1" data-name="@drink.Name"/>
+                </div><div class="col-lg-4">
+                    <p>@drink.Quantity</p>
+                </div><div class="col-lg-4">
+                    <input class="qtyincrease" type="button" value="+1" data-name="@drink.Name"/>
+                </div>
+            </div><div class="col-lg-2">
+                <input class="delete" type="button" value="Delete"  data-name="@drink.Name" />
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('.qtyincrease').on("click", function () {
+                var name = $(this).data("name");
+                changeQty(name, 1);
+            });
+
+            $('.qtydecrease').on("click", function () {
+                var name = $(this).data("name");
+                changeQty(name, -1);
+            });
+
+            function changeQty(name, amount) {
+                window.location.href = "/Home/Update_DrinkQuantity?drink=" + name + "&amt=" + amount;
+            };
+
+            $('.delete').on("click", function () {
+                var name = $(this).data("name");
+                window.location.href = "/Home/Delete_Drink?drink=" + name;
+            });
+        });
+    </script>
+}
